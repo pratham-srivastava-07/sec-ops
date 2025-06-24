@@ -1,0 +1,19 @@
+{
+  "name": "sec-ops",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm-run-all -p dev:client dev:server",
+    "dev:client": "npm --workspace apps/client run dev",
+    "dev:server": "npm --workspace apps/server run dev",
+    "build": "npm-run-all build:*",
+    "build:client": "npm --workspace apps/client run build",
+    "build:server": "npm --workspace apps/server run build"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}
