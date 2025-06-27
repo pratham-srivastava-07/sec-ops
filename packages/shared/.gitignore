@@ -1,4 +1,9 @@
-dist 
+# Node
 node_modules
+dist
 
+# Environment
+.env
+
+# Prisma generated files
 /src/generated/prisma

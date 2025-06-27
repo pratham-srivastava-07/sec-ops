@@ -1,2 +1,7 @@
-dist
+# Node
 node_modules
+dist
+
+# Environment
+.env
+

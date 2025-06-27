@@ -1,4 +1,4 @@
-import { prismaClient } from "@ops/shared";
+import {supabase} from "@ops/shared"
 import express from "express"
 import { PORT } from "./constants";
 

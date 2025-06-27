@@ -1,0 +1,3 @@
+apps/client/app/globals.css** linguist-vendored
+apps/client/postcss.config.mjs** linguist-vendored
+apps/client/eslint.config.mjs** linguist-vendored
