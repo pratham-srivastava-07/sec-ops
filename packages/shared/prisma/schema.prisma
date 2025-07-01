@@ -25,6 +25,50 @@ model User {
   @@map("user_profiles")
 }
 
+model Incident {
+  id                String     @id @default(uuid())
+  title             String
+  description       String
+  status            IncidentStatus @default(OPEN)
+  severity          IncidentSeverity
+  category          String     
+  source            String     
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  createdBy         String     
+  assignedTo        String?    
+
+  investigationNotes String?   
+  mitigationSteps    String?
+  resolutionSummary  String?
+
+  affectedSystems   String[]   
+  reportedIP        String?    
+
+  isReportable      Boolean    @default(false) 
+  reportDeadline    DateTime? 
+  notifiedAuthorities Boolean  @default(false)
+
+  attachments       Json?     
+
+  @@map("incidents")
+}
+
+enum IncidentStatus {
+  OPEN
+  INVESTIGATING
+  RESOLVED
+  CLOSED
+}
+
+enum IncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+
 enum Role {
   ADMIN
   ANALYST
