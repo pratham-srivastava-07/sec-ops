@@ -17,3 +17,28 @@ export const createIncidentSchema = z.object({
 });
 
 export type CreateIncidentInput = z.infer<typeof createIncidentSchema>;
+
+export const updateIncidentSchema = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
+  status: z.enum(["OPEN", "INVESTIGATING", "RESOLVED", "CLOSED"]).optional(), // Changed IN_PROGRESS to INVESTIGATING
+  severity: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]).optional(),
+  category: z.string().optional(),
+  source: z.string().optional(),
+  createdBy: z.string().optional(),
+  assignedTo: z.string().nullable().optional(),
+
+  investigationNotes: z.string().nullable().optional(),
+  mitigationSteps: z.string().nullable().optional(),
+  resolutionSummary: z.string().nullable().optional(),
+
+  affectedSystems: z.array(z.string()).optional(),
+  reportedIP: z.string().nullable().optional(),
+
+  isReportable: z.boolean().optional(),
+  reportDeadline: z.coerce.date().nullable().optional(),
+  notifiedAuthorities: z.boolean().optional(),
+
+  attachments: z.any().optional(),
+});
+export type UpdateIncident = z.infer<typeof updateIncidentSchema>
