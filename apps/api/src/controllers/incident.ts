@@ -145,3 +145,4 @@ export async function deleteAllController(req: any, res: any): Promise<any> {
         })
     }
 }
+
