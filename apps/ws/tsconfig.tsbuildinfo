@@ -1,0 +1,1 @@
+{"root":["./src/auth.ts","./src/index.ts","./src/rooms.ts","./src/router.ts","./src/server.ts","./src/helper/handlejoin.ts","./src/helper/handlelogs.ts"],"version":"5.8.3"}

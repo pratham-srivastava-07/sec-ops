@@ -1,5 +1,5 @@
 {
-  "name": "ws",
+  "name": "sec-ops-ws",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -10,5 +10,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1"
+  }
 }

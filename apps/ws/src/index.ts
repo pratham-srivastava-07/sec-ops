@@ -1,6 +1,5 @@
 import { WebSocketServer } from 'ws';
-import {supabase} from "@ops/shared"
-import { setUpWebsocket } from './helper';
+import { setUpWebsocket } from './server';
 
 const wss = new WebSocketServer({ port: 4000 });
 
