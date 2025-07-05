@@ -37,7 +37,7 @@ model Incident {
   updatedAt         DateTime   @updatedAt
   createdBy         String     
   assignedTo        String?    
-
+  incidentLogs      IncidentLog[]
   investigationNotes String?   
   mitigationSteps    String?
   resolutionSummary  String?
@@ -52,6 +52,18 @@ model Incident {
   attachments       Json?     
 
   @@map("incidents")
+}
+
+model IncidentLog {
+  id         String   @id @default(uuid())
+  incidentId String
+  userEmail  String
+  message    String
+  createdAt  DateTime @default(now())
+
+  incident   Incident @relation(fields: [incidentId], references: [id])
+
+  @@map("incident_logs")
 }
 
 enum IncidentStatus {

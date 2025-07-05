@@ -1,14 +1,22 @@
 import { broadcastMessage } from "../rooms";
 
-export function handleLogs(ws: any, payload: any, user: any) {
-  const room = ws.room;
-  if (!room) return;
+import { prismaClient } from "@ops/shared";
 
-  const log = {
-    user: user.email,
-    message: payload.message,
-    timestamp: new Date().toISOString()
-  };
+export async function handleLogs(ws: any, payload: any, user: any) {
+  const incidentId = ws.room;
+  if (!incidentId) return;
 
-  broadcastMessage(room, "log:new", log);
+  const log = await prismaClient.incidentLog.create({
+    data: {
+      incidentId,
+      userEmail: user.email,
+      message: payload.message
+    }
+  });
+
+  broadcastMessage(incidentId, "log:new", {
+    user: log.userEmail,
+    message: log.message,
+    timestamp: log.createdAt
+  });
 }
