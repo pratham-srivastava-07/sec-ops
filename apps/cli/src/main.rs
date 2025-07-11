@@ -1,9 +1,10 @@
 mod cli;
 
 use crate::cli::cli::CLI; 
-use clap::Parser;
+use clap::{Parser, CommandFactory};
+
 
 fn main() {
-    let cli = CLI::parse();
-    println!("Command: {}", cli.command);
-}
+    let _cli = CLI::parse();
+    println!("Available commands: {}", CLI::command());
+} 
