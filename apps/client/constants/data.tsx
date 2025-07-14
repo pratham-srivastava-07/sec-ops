@@ -113,6 +113,8 @@ export const testimonial: Testimonial = {
   initials: "JS",
 }
 
-export const navigationItems = ["Features", "How It Works", "Roadmap", "About Us"]
+
+
+export const navigationItems = ["Features", "How It Works", "Roadmap", "About Us", "Contact"]
 
 export const footerLinks = ["GitHub", "Docs", "Login", "Terms"]

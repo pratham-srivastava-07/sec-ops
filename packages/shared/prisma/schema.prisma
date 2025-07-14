@@ -17,10 +17,16 @@ datasource db {
 
 model User {
   id        String   @id @default(uuid())
-  authId    String   @unique // Supabase user ID
+  authId    String   @unique
   email     String   @unique
   role      Role     @default(USER)
   createdAt DateTime @default(now())
+
+  // New relationships
+  createdIncidents  Incident[] @relation("CreatedByUser")
+  assignedIncidents Incident[] @relation("AssignedToUser")
+
+  integrations Integration[] 
 
   @@map("user_profiles")
 }
@@ -35,8 +41,13 @@ model Incident {
   source            String     
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
-  createdBy         String     
-  assignedTo        String?    
+
+  createdById       String
+  createdBy         User       @relation("CreatedByUser", fields: [createdById], references: [id])
+
+  assignedToId      String?
+  assignedTo        User?      @relation("AssignedToUser", fields: [assignedToId], references: [id])
+
   incidentLogs      IncidentLog[]
   investigationNotes String?   
   mitigationSteps    String?
@@ -44,11 +55,9 @@ model Incident {
 
   affectedSystems   String[]   
   reportedIP        String?    
-
   isReportable      Boolean    @default(false) 
   reportDeadline    DateTime? 
   notifiedAuthorities Boolean  @default(false)
-
   attachments       Json?     
 
   @@map("incidents")
@@ -85,4 +94,26 @@ enum Role {
   ADMIN
   ANALYST
   USER
+}
+
+model Integration {
+  id         String   @id @default(uuid())
+  type       IntegrationType
+  url        String?         // for webhook-based (Slack/Discord)
+  token      String?         // for OAuth-based (GitHub/Jira)
+  metadata   Json?           
+  userId     String
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@map("integrations")
+}
+
+enum IntegrationType {
+  SLACK
+  DISCORD
+  GITHUB
+  JIRA
+  CUSTOM_WEBHOOK
 }

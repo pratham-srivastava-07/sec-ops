@@ -4,8 +4,6 @@ import { useState } from "react"
 import { createSupabaseClient } from "@ops/shared";
 
 
-
-
 export default function Signup() {
      const supabase = createSupabaseClient()
   
