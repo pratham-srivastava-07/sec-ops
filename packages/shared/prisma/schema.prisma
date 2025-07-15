@@ -17,6 +17,7 @@ datasource db {
 
 model User {
   id        String   @id @default(uuid())
+  name      String
   authId    String   @unique
   email     String   @unique
   role      Role     @default(USER)

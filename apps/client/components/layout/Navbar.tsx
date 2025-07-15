@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { navigationItems } from "@/constants/data"
 import Link from "next/link"
+import { useUser } from "@/hooks/useUser"
 
 interface NavbarProps {
   isDark: boolean
@@ -16,6 +17,7 @@ interface NavbarProps {
 
 export function Navbar({ isDark, onThemeToggle }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const user = useUser()
 
   return (
     <motion.header
@@ -46,11 +48,13 @@ export function Navbar({ isDark, onThemeToggle }: NavbarProps) {
         <div className="flex items-center space-x-4 text-foreground cursor-pointer">
           <ThemeToggle isDark={isDark} onToggle={onThemeToggle} />
 
-          <Link href={"/login"}>
-              <Button variant="ghost" className="hidden md:inline-flex text-foreground cursor-pointer">
-                Login
-              </Button>
-          </Link>
+          {!user && (
+              <Link href={"/login"}>
+                  <Button variant="ghost" className="hidden md:inline-flex text-foreground cursor-pointer">
+                      Login
+                  </Button>
+              </Link>
+          )}
 
           <Button className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 cursor-pointer">
             Get Started
