@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useState } from "react"
 import { createSupabaseClient } from "@ops/shared" // your client
 import type { Session } from "@supabase/supabase-js"

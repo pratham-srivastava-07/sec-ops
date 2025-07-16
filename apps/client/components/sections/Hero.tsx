@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { ArrowRight, Github } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import Link from "next/link"
 
 export function HeroSection() {
   const teamMembers = ["JD", "SM", "AL", "KR"]
@@ -59,10 +60,12 @@ export function HeroSection() {
               </motion.div>
             </Button>
 
-            <Button size="lg" variant="outline" className="group bg-transparent cursor-pointer text-foreground  ">
-              <Github className="w-5 h-5 mr-2" />
-              Login with GitHub
-            </Button>
+            <Link href={"/login"}>
+                <Button size="lg" variant="outline" className="group bg-transparent cursor-pointer text-foreground  ">
+                  <Github className="w-5 h-5 mr-2" />
+                  Login with GitHub
+              </Button>
+            </Link>
           </motion.div>
 
           <motion.div

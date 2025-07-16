@@ -48,18 +48,11 @@ export function Navbar({ isDark, onThemeToggle }: NavbarProps) {
         <div className="flex items-center space-x-4 text-foreground cursor-pointer">
           <ThemeToggle isDark={isDark} onToggle={onThemeToggle} />
 
-          {!user && (
-              <Link href={"/login"}>
-                  <Button variant="ghost" className="hidden md:inline-flex text-foreground cursor-pointer">
-                      Login
-                  </Button>
-              </Link>
-          )}
-
-          <Button className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 cursor-pointer">
-            Get Started
-          </Button>
-
+          <Link href={`${user ? "/dashboard" : "/login"}`}>
+            <Button className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 cursor-pointer">
+              Get Started
+            </Button>
+          </Link>
           <Button 
             variant="ghost" 
             size="icon" 

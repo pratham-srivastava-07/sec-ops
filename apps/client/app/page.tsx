@@ -37,23 +37,91 @@ export default function CIRCLLanding() {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${isDark ? "dark bg-gray-900" : "bg-white"}`}>
-      <Navbar isDark={isDark} onThemeToggle={handleThemeToggle} />
-      <HeroSection />
-      <CustomerLogosSection />
-      <ProblemSolutionSection />
-      <StatsSection />
-      <LivePreviewSection activeIncident={activeIncident} />
-      <FeaturesSection />
-      <HowItWorksSection />
-      <IntegrationsSection />
-      <WhyCIRCLSection />
-      <PricingSection />
-      <SecuritySection />
-      <TestimonialSection />
-      <RoadmapSection />
-      <FAQSection />
-      <CTASection />
-      <Footer />
+      <div className="w-full overflow-x-hidden">
+        <div className="sticky top-0 z-50 w-full">
+          <Navbar isDark={isDark} onThemeToggle={handleThemeToggle} />
+        </div>
+        <main className="w-full">
+          <section className="w-full px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <HeroSection />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <CustomerLogosSection />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <ProblemSolutionSection />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <StatsSection />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <LivePreviewSection activeIncident={activeIncident} />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <FeaturesSection />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <HowItWorksSection />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <IntegrationsSection />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <WhyCIRCLSection />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <PricingSection />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <SecuritySection />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <TestimonialSection />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <RoadmapSection />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <FAQSection />
+            </div>
+          </section>
+          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+            <div className="max-w-7xl mx-auto">
+              <CTASection />
+            </div>
+          </section>
+        </main>
+        <footer className="w-full">
+          <Footer />
+        </footer>
+      </div>
     </div>
   )
 }
