@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { supabaseAnonKey, supabaseUrl } from "./supabase/server";
 export * from "./supabase/client";
 export * from "./types/incident"
+export * from "./utils"
 
 export const prismaClient = new PrismaClient()
 

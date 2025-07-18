@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { createSupabaseClient } from "@ops/shared"
+import { createSupabaseClient, syncUserToBackend } from "@ops/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,6 +18,7 @@ export function AuthForm() {
   console.log("Pathnname",  pathname)
   const router = useRouter()
   const [email, setEmail] = useState("")
+  const [name, setName] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState("")
@@ -28,10 +29,24 @@ export function AuthForm() {
     e.preventDefault()
     setLoading(true)
     setMessage("")
-    let authResponse
+    let authResponse: any
 
     if (type === "signup") {
+      console.log("here");
+      
       authResponse = await supabase.auth.signUp({ email, password })
+      console.log("authResponse", authResponse);
+      
+      if(authResponse?.data?.user){
+        console.log("calling function for db entry");
+        
+        syncUserToBackend({
+          id: authResponse.data.user.id,
+          name: name,
+          email: email,
+          webhookUrl: process.env.NEXT_PUBLIC_WEBHOOK_URL || "",
+        })
+      }
     } else {
       authResponse = await supabase.auth.signInWithPassword({ email, password })
     }
@@ -155,6 +170,17 @@ export function AuthForm() {
               </TabsContent>
               <TabsContent value="signup" className="mt-6">
                 <form onSubmit={(e) => handleAuth(e, "signup")} className="space-y-4">
+                <div>
+                    <Label htmlFor="name-signup">Name</Label>
+                    <Input
+                      id="name-signup"
+                      type="text"
+                      placeholder="John Doe"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
+                  </div>
                   <div>
                     <Label htmlFor="email-signup">Email</Label>
                     <Input
