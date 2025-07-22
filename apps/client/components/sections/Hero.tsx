@@ -5,12 +5,16 @@ import { ArrowRight, Github } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import Link from "next/link"
+import { useUser } from "@/hooks/useUser"
 
 export function HeroSection() {
   const teamMembers = ["JD", "SM", "AL", "KR"]
+  const user = useUser()
+  console.log("User details", user)
 
   return (
     <section className="pt-32 pb-20 px-6">
+      Welcome {user?.id}
       <div className="container mx-auto text-center">
         <motion.div
           className="max-w-4xl mx-auto"
