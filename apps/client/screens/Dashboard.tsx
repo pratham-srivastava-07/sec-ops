@@ -5,9 +5,10 @@ import { createSupabaseClient } from "@ops/shared";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LayoutDashboard, AlertTriangle, Users, Settings } from "lucide-react";
+import { createClient } from "@/utils/supabase/browserClient";
 
 export default function Dashboard() {
-  const supabase = createSupabaseClient();
+  const supabase = createClient();
   const router = useRouter();
 
   const handleSignout = async () => {

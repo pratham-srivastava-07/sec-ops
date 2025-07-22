@@ -3,52 +3,56 @@
 import type React from "react"
 import { useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { createSupabaseClient, syncUserToBackend } from "@ops/shared"
+import {  syncUserToBackend } from "@ops/shared"
 import { Button } from "@/components/ui/button"
+// import {createClient} from "@/utils/supabase"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Github, Loader2, Terminal } from "lucide-react"
 import { motion } from "framer-motion"
+import { createClient } from "@/utils/supabase/browserClient"
+
 
 export function AuthForm() {
-  const supabase = createSupabaseClient()
+  const supabase = createClient()
   const pathname = usePathname()
-  console.log("Pathnname",  pathname)
   const router = useRouter()
+
   const [email, setEmail] = useState("")
   const [name, setName] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState("")
   const defaultTab = pathname === "/signup" ? "signup" : "signin"
-  const [tab, setTab] = useState(defaultTab) // 'signin' or 'signup'
+  const [tab, setTab] = useState(defaultTab)
 
   const handleAuth = async (e: React.FormEvent, type: "signin" | "signup") => {
     e.preventDefault()
     setLoading(true)
     setMessage("")
-    let authResponse: any
 
+    let authResponse
     if (type === "signup") {
-      console.log("here");
-      
-      authResponse = await supabase.auth.signUp({ email, password })
-      console.log("authResponse", authResponse);
-      
-      if(authResponse?.data?.user){
-        console.log("calling function for db entry");
-        
+      authResponse = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: `${window.location.origin}/auth/callback`,
+            },
+        })
+      if (authResponse?.data?.user) {
         syncUserToBackend({
           id: authResponse.data.user.id,
-          name: name,
-          email: email,
+          name,
+          email,
           webhookUrl: process.env.NEXT_PUBLIC_WEBHOOK_URL || "",
         })
       }
     } else {
       authResponse = await supabase.auth.signInWithPassword({ email, password })
+      console.log("SIGNIN RESPONSE", authResponse)
     }
 
     setLoading(false)
@@ -70,9 +74,7 @@ export function AuthForm() {
     setMessage("")
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`, 
-      },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     })
     setLoading(false)
     if (error) {
@@ -82,7 +84,6 @@ export function AuthForm() {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-muted/50">
-      {/* Left Part: CIRCL Information */}
       <motion.div
         className="lg:w-1/2 flex flex-col items-center justify-center p-8 text-center lg:text-left bg-gradient-to-br from-gray-900 to-gray-800 text-white"
         initial={{ opacity: 0, x: -100 }}
@@ -98,25 +99,14 @@ export function AuthForm() {
           <Terminal className="w-16 h-16 text-orange-500" />
           <h1 className="text-5xl font-bold">CIRCL</h1>
         </motion.div>
-        <motion.p
-          className="text-2xl font-semibold mb-4 max-w-md"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-        >
+        <motion.p className="text-2xl font-semibold mb-4 max-w-md" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.6 }}>
           Real-Time Incident Collaboration for DevSecOps Teams
         </motion.p>
-        <motion.p
-          className="text-lg text-gray-300 max-w-md"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-        >
+        <motion.p className="text-lg text-gray-300 max-w-md" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.6 }}>
           Report, respond, and resolve security or operational incidents — together, in real time.
         </motion.p>
       </motion.div>
 
-      {/* Right Part: Auth Form */}
       <motion.div
         className="lg:w-1/2 flex items-center justify-center p-8"
         initial={{ opacity: 0, x: 100 }}
@@ -142,69 +132,34 @@ export function AuthForm() {
                 <form onSubmit={(e) => handleAuth(e, "signin")} className="space-y-4">
                   <div>
                     <Label htmlFor="email-signin">Email</Label>
-                    <Input
-                      id="email-signin"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
+                    <Input id="email-signin" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
                   </div>
                   <div>
                     <Label htmlFor="password-signin">Password</Label>
-                    <Input
-                      id="password-signin"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
+                    <Input id="password-signin" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
                   </div>
                   <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {loading ? "Signing In..." : "Sign In"}
                   </Button>
                 </form>
               </TabsContent>
               <TabsContent value="signup" className="mt-6">
                 <form onSubmit={(e) => handleAuth(e, "signup")} className="space-y-4">
-                <div>
+                  <div>
                     <Label htmlFor="name-signup">Name</Label>
-                    <Input
-                      id="name-signup"
-                      type="text"
-                      placeholder="John Doe"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                    />
+                    <Input id="name-signup" type="text" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} required />
                   </div>
                   <div>
                     <Label htmlFor="email-signup">Email</Label>
-                    <Input
-                      id="email-signup"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
+                    <Input id="email-signup" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
                   </div>
                   <div>
                     <Label htmlFor="password-signup">Password</Label>
-                    <Input
-                      id="password-signup"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
+                    <Input id="password-signup" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
                   </div>
                   <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {loading ? "Signing Up..." : "Sign Up"}
                   </Button>
                 </form>
@@ -218,12 +173,7 @@ export function AuthForm() {
                 <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
               </div>
             </div>
-            <Button
-              variant="outline"
-              className="w-full bg-transparent"
-              onClick={() => handleSocialAuth("github")}
-              disabled={loading}
-            >
+            <Button variant="outline" className="w-full bg-transparent" onClick={() => handleSocialAuth("github")} disabled={loading}>
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Github className="mr-2 h-4 w-4" />}
               GitHub
             </Button>
