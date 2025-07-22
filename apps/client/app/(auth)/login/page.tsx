@@ -1,16 +1,19 @@
 "use client"
-import { AuthForm } from "@/components/auth/auth-form";
-import { useUser } from "@/hooks/useUser";
-import {redirect} from "next/navigation"
+
+import { useEffect } from "react"
+import { SignInForm } from "@/components/auth/Signin"
+import { useUser } from "@/hooks/useUser"
+import { useRouter } from "next/navigation"
 
 export default function SigninPage() {
-    const user = useUser()
-    if(user) {
-        redirect("/dashboard")
+  const user = useUser()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard")
     }
-    return (
-        <div>
-            <AuthForm />
-        </div>
-    )
+  }, [user, router])
+
+  return <SignInForm />
 }
