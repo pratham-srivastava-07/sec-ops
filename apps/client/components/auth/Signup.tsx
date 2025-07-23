@@ -27,7 +27,7 @@ export function SignUpForm() {
       setMessage(`Error: ${error}`)
     } else {
       setMessage("Check your email for a confirmation link!")
-      router.push("/check-your-email")
+      // router.push("/check-your-email")
     }
   }
 
