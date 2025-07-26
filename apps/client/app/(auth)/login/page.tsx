@@ -11,6 +11,7 @@ export default function SigninPage() {
 
   useEffect(() => {
     if (user) {
+      console.log(user)
       router.push("/dashboard")
     }
   }, [user, router])
