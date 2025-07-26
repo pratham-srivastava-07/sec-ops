@@ -1,4 +1,3 @@
-import { supabase } from "@ops/shared"
 import express from "express"
 import { PORT } from "./constants";
 import cors from "cors"
