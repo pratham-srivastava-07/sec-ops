@@ -4,7 +4,6 @@ import { Navbar } from "@/components/layout/Navbar"
 import { FeaturesSection } from "@/components/sections/Features"
 import { HeroSection } from "@/components/sections/Hero"
 import { HowItWorksSection } from "@/components/sections/HowItWorks"
-import { LivePreviewSection } from "@/components/sections/LivePreview"
 import { RoadmapSection } from "@/components/sections/Roadmap"
 import { ProblemSolutionSection } from "@/components/sections/Solution"
 import { TestimonialSection } from "@/components/sections/Testimonials"
@@ -60,12 +59,6 @@ export default function CIRCLLanding() {
           <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
             <div className="max-w-7xl mx-auto">
               <StatsSection />
-            </div>
-          </section>
-
-          <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-            <div className="max-w-7xl mx-auto">
-              <LivePreviewSection activeIncident={activeIncident} />
             </div>
           </section>
 

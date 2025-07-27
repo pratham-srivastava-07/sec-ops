@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { useState } from "react"
 import { ChevronDown } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -44,64 +43,48 @@ export function FAQSection() {
   return (
     <section className="py-20 px-6">
       <div className="container mx-auto max-w-4xl">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4 text-foreground">
             Frequently asked <span className="text-orange-500">questions</span>
           </h2>
           <p className="text-xl text-muted-foreground">
             Everything you need to know about CIRCL and incident management.
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          className="space-y-4"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, staggerChildren: 0.1 }}
-        >
+        <div className="space-y-4">
           {faqs.map((faq, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.6 }}
-            >
+            <div key={index}>
               <Card className="overflow-hidden">
-                <motion.button
+                <button
                   className="w-full p-6 text-left flex items-center justify-between hover:bg-muted/50 transition-colors"
                   onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  whileHover={{ backgroundColor: "rgba(0,0,0,0.02)" }}
                 >
                   <span className="font-semibold text-foreground pr-4">{faq.question}</span>
-                  <motion.div animate={{ rotate: openIndex === index ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                  <div
+                    style={{
+                      transform: `rotate(${openIndex === index ? 180 : 0}deg)`,
+                      transition: "transform 0.2s ease-in-out",
+                    }}
+                  >
                     <ChevronDown className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                  </motion.div>
-                </motion.button>
-                <motion.div
-                  initial={false}
-                  animate={{
+                  </div>
+                </button>
+                <div
+                  className="overflow-hidden transition-all duration-300 ease-in-out"
+                  style={{
                     height: openIndex === index ? "auto" : 0,
                     opacity: openIndex === index ? 1 : 0,
                   }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="overflow-hidden"
                 >
                   <CardContent className="pt-0 pb-6">
                     <p className="text-muted-foreground">{faq.answer}</p>
                   </CardContent>
-                </motion.div>
+                </div>
               </Card>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   )
