@@ -3,6 +3,7 @@ import { userRouter } from "./user"
 import { incidentRouter } from "./incident"
 import statsController from "../controllers/stats"
 import { webhookRouter } from "./webhook"
+import { dashboardRouter } from "./dashboard"
 
 export const router = express.Router()
 
@@ -10,3 +11,4 @@ router.use("/user", userRouter)
 router.use("/incidents", incidentRouter)
 router.use("/stats", statsController)
 router.use("/webhooks", webhookRouter)
+router.use("/dashboard", dashboardRouter)

@@ -32,7 +32,13 @@ export default async function createIncidentController(req: any, res: any): Prom
 
 export async function getAllIncidentController(req: any, res: any): Promise<any> {
   try {
-      const allIncidents = await prismaClient.incident.findMany({})
+      const limit =  req.query.limit ? parseInt(req.query.limit as string, 10) : undefined
+      const allIncidents = await prismaClient.incident.findMany({
+        take: limit,
+        orderBy: {
+          createdAt: "desc"
+        }
+      })
 
       return res.status(200).json({
         message: `Fetched all incidents successfully`,
