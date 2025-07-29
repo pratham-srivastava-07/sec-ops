@@ -19,6 +19,7 @@
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/auth-helpers-shared": "^0.7.0",
     "@supabase/ssr": "^0.6.1",
+    "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",

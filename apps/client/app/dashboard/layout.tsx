@@ -8,7 +8,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-gray-950 text-white">
+    <div className="flex h-screen bg-black text-white">
       {/* Sidebar */}
       <div className={`fixed inset-y-0 z-30 transition-transform duration-300 md:relative md:translate-x-0 ${
         isOpen ? "translate-x-0" : "-translate-x-full"

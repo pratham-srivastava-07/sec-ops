@@ -40,7 +40,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className={`h-full bg-gray-900/60 backdrop-blur-xl border-r border-gray-800/50 flex flex-col transition-all duration-300 ${
+      className={`h-full bg-black backdrop-blur-xl border-r border-gray-800/50 flex flex-col transition-all duration-300 ${
         isOpen ? "w-64" : "w-20"
       }`}
     >
