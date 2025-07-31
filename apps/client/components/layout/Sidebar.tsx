@@ -16,8 +16,8 @@ import { createClient } from "@/utils/supabase/browserClient";
 import { useState } from "react";
 
 const navItems = [
-  { href: "/dashboard/overview", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/incidents", label: "Incidents", icon: AlertTriangle },
+  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/incidents", label: "Incidents", icon: AlertTriangle },
   { href: "/dashboard/users", label: "Users", icon: Users },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
