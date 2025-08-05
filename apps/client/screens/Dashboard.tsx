@@ -312,8 +312,8 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button
-                  onClick={() => router.push("/dashboard/incidents/create")}
-                  className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={() => router.push("/incidents/new")}
+                  className="w-full justify-start bg-blue-600 hover:bg-blue-700 cursor pointer text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Create Incident
