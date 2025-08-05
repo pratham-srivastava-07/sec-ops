@@ -2,8 +2,7 @@
 
 import { motion } from "framer-motion"
 import { ArrowRight, Play, Shield, Users, Zap } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@ops/ui"
 import Link from "next/link"
 import { useUser } from "@/hooks/useUser"
 

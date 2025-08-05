@@ -1,8 +1,8 @@
 "use client"
 
 import { ArrowRight, Zap } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@ops/ui"
+import { Card, CardContent } from "@ops/ui"
 
 export function CTASection() {
   return (

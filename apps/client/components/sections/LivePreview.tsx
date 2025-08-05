@@ -4,10 +4,10 @@
 
 import { motion } from "framer-motion"
 import { AlertTriangle } from "lucide-react"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@ops/ui"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Separator } from "@/components/ui/separator"
+import { Avatar, AvatarFallback } from "@ops/ui"
+import { Separator } from "@ops/ui"
 import { incidents } from "@/constants/data"
 import type { Incident } from "@/types"
 

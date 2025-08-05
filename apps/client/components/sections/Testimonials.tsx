@@ -1,8 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Card, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Card, CardContent } from "@ops/ui"
+import { Avatar, AvatarFallback } from "@ops/ui"
 import { testimonial } from "@/constants/data"
 
 export function TestimonialSection() {

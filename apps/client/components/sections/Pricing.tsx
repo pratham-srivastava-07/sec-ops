@@ -2,9 +2,9 @@
 
 import { motion } from "framer-motion"
 import { Check, Star } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@ops/ui"
+import { Card, CardContent, CardHeader, CardTitle } from "@ops/ui"
+import { Badge } from "@ops/ui"
 
 const plans = [
   {

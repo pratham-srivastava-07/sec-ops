@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@ops/ui"
 
 const stats = [
   { number: "99.9%", label: "Uptime", description: "Reliable incident tracking" },

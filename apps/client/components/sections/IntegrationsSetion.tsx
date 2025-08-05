@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@ops/ui"
 
 const integrations = [
   { name: "Slack", logo: "💬", color: "bg-purple-500" },

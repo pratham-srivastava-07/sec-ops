@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { CheckCircle } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@ops/ui"
 
 export function WhyCIRCLSection() {
   const traditionalItems = [
