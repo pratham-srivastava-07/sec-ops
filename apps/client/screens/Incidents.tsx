@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search, MoreHorizontal, AlertTriangle, CheckCircle, Clock, XCircle, Plus, RefreshCw, Calendar, User, MapPin, Eye, LayoutGrid, List } from 'lucide-react';
