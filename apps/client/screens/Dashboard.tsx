@@ -1,400 +1,456 @@
 "use client"
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Search, MoreHorizontal, AlertTriangle, CheckCircle, Clock, XCircle, Plus, RefreshCw, Calendar, User, MapPin, Eye, LayoutGrid, List } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ops/ui';
+import { Button } from '@ops/ui';
+import { Input } from '@ops/ui';
+import { Badge } from '@ops/ui';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ops/ui';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ops/ui';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@ops/ui';
 
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { createSupabaseClient } from "@ops/shared"
-import { useRouter } from "next/navigation"
-import {
-  Activity,
-  AlertTriangle,
-  Calendar,
-  User,
-  Plus,
-  Slack,
-  LogOut,
-  TrendingUp,
-  Clock,
-  CheckCircle,
-} from "lucide-react"
-import axios from "axios"
+// import {}
 
-type DashboardStats = {
-  total: number
-  byStatus: {
-    open: number
-    investigating: number
-    resolved: number
-    closed: number
-  }
-  bySeverity: {
-    critical: number
-    high: number
-    medium: number
-    low: number
-  }
-}
-
-type Incident = {
-  id: string
-  title: string
-  description: string
-  severity: string
-  status: string
-  category: string
-  source: string
-  createdAt: string
-  updatedAt: string
-  createdById: string
-  assignedToId: string | null
-  investigationNotes: string | null
-  mitigationSteps: string | null
-  resolutionSummary: string | null
-  affectedSystems: string[]
-  reportedIP: string | null
-  isReportable: boolean
-  reportDeadline: string | null
-  notifiedAuthorities: boolean
-  attachments: any
-}
-
-const getSeverityColor = (severity: string) => {
-  switch (severity.toLowerCase()) {
-    case "critical":
-      return "destructive"
-    case "high":
-      return "destructive"
-    case "medium":
-      return "default"
-    case "low":
-      return "secondary"
-    default:
-      return "outline"
-  }
-}
-
-const getStatusColor = (status: string) => {
-  switch (status.toLowerCase()) {
-    case "open":
-      return "destructive"
-    case "investigating":
-      return "default"
-    case "resolved":
-      return "secondary"
-    case "closed":
-      return "outline"
-    default:
-      return "outline"
-  }
-}
+const PORT = process.env.PORT || 3001;
 
 export default function Dashboard() {
-  const [stats, setStats] = useState<DashboardStats | null>(null)
-  const [recentIncidents, setRecentIncidents] = useState<Incident[]>([])
-  const [loading, setLoading] = useState(true)
-  const supabase = createSupabaseClient()
-  const router = useRouter()
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [severityFilter, setSeverityFilter] = useState("all");
+  const [viewMode, setViewMode] = useState("table");
+
+  async function getAllIncidents() {
+    try {
+      setLoading(true);
+      const res = await axios.get(`http://localhost:${PORT}/api/v1/incidents`);
+      setData(res.data.result || []);
+      return res.data;
+    } catch(e) {
+      console.log("Error occurred fetching incidents", e);
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const [summaryResponse, incidentsResponse] = await Promise.all([
-          axios.get("http://localhost:3001/api/v1/dashboard/summary"),
-          axios.get("http://localhost:3001/api/v1/incidents"),
-        ])
+    getAllIncidents();
+  }, []);
 
-        // Handle the API response structure
-        setStats(summaryResponse.data.result)
-        setRecentIncidents(incidentsResponse.data.result)
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [])
-
-  const handleSignout = async () => {
-    await supabase.auth.signOut()
-    router.push("/")
-  }
-
-  // Calculate stats for display cards based on actual API response
-  const getThisWeekCount = () => {
-    if (!recentIncidents) return 0
-    const oneWeekAgo = new Date()
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+  const filteredIncidents = data.filter((incident: any) => {
+    const matchesSearch = incident.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         incident.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         incident.id.toLowerCase().includes(searchTerm.toLowerCase());
     
-    return recentIncidents.filter(incident => 
-      new Date(incident.createdAt) >= oneWeekAgo
-    ).length
-  }
+    const matchesStatus = statusFilter === "all" || incident.status === statusFilter;
+    const matchesSeverity = severityFilter === "all" || incident.severity === severityFilter;
+    
+    return matchesSearch && matchesStatus && matchesSeverity;
+  });
 
-  const getAssignedToMeCount = () => {
-    // You'll need to replace this with actual user ID logic
-    // For now, counting incidents that have an assignedToId
-    return recentIncidents.filter(incident => incident.assignedToId !== null).length
-  }
+  const getStatusIcon = (status: any) => {
+    switch(status?.toUpperCase()) {
+      case 'OPEN': return <AlertTriangle className="w-4 h-4" />;
+      case 'INVESTIGATING': return <Clock className="w-4 h-4" />;
+      case 'RESOLVED': return <CheckCircle className="w-4 h-4" />;
+      case 'CLOSED': return <XCircle className="w-4 h-4" />;
+      default: return <AlertTriangle className="w-4 h-4" />;
+    }
+  };
 
-  const statsCards = [
-    {
-      title: "Open Incidents",
-      value: (stats?.byStatus.open as any) + stats?.byStatus.investigating || 0,
-      icon: Activity,
-      color: "text-red-400",
-      bgColor: "bg-red-400/10",
-    },
-    {
-      title: "Critical Issues",
-      value: stats?.bySeverity.critical || 0,
-      icon: AlertTriangle,
-      color: "text-orange-400",
-      bgColor: "bg-orange-400/10",
-    },
-    {
-      title: "This Week",
-      value: getThisWeekCount(),
-      icon: Calendar,
-      color: "text-blue-400",
-      bgColor: "bg-blue-400/10",
-    },
-    {
-      title: "Assigned to Me",
-      value: getAssignedToMeCount(),
-      icon: User,
-      color: "text-green-400",
-      bgColor: "bg-green-400/10",
-    },
-  ]
+  const getStatusColor = (status: any) => {
+    switch(status?.toUpperCase()) {
+      case 'OPEN': return 'bg-red-900 text-red-100 border-red-700';
+      case 'INVESTIGATING': return 'bg-yellow-900 text-yellow-100 border-yellow-700';
+      case 'RESOLVED': return 'bg-green-900 text-green-100 border-green-700';
+      case 'CLOSED': return 'bg-gray-700 text-gray-100 border-gray-600';
+      default: return 'bg-red-900 text-red-100 border-red-700';
+    }
+  };
+
+  const getSeverityColor = (severity: any) => {
+    switch(severity?.toUpperCase()) {
+      case 'CRITICAL': return 'bg-red-900 text-red-100 border-red-700';
+      case 'HIGH': return 'bg-orange-900 text-orange-100 border-orange-700';
+      case 'MEDIUM': return 'bg-yellow-900 text-yellow-100 border-yellow-700';
+      case 'LOW': return 'bg-blue-900 text-blue-100 border-blue-700';
+      default: return 'bg-gray-700 text-gray-100 border-gray-600';
+    }
+  };
+
+  const formatDate = (dateString: any) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white p-6">
+      <div className="min-h-screen bg-black p-4">
         <div className="max-w-7xl mx-auto">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-800 rounded w-64"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-32 bg-gray-800 rounded-lg"></div>
-              ))}
-            </div>
-            <div className="h-96 bg-gray-800 rounded-lg"></div>
+          <div className="flex items-center justify-center h-64">
+            <RefreshCw className="w-8 h-8 animate-spin text-blue-400" />
+            <span className="ml-2 text-lg text-white">Loading incidents...</span>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="max-w-7xl mx-auto p-6 space-y-8">
+    <div className="min-h-screen bg-black p-4">
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-              CIRCL Dashboard
-            </h1>
-            <p className="text-gray-400 mt-1">Monitor and manage your incidents</p>
+            <h1 className="text-3xl font-bold text-white">Incidents Management</h1>
+            <p className="text-gray-400 mt-1">Monitor and manage security incidents</p>
           </div>
-          <Button
-            variant="outline"
-            onClick={handleSignout}
-            className="hidden sm:flex border-gray-700 hover:bg-gray-800 text-white bg-transparent"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button onClick={getAllIncidents} variant="outline" size="sm" disabled={loading} className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700">
+              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Plus className="w-4 h-4 mr-2" />
+              New Incident
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {statsCards.map((stat, index) => {
-            const Icon = stat.icon
-            return (
-              <Card key={index} className="bg-gray-900/50 border-gray-800 hover:bg-gray-900/70 transition-colors">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium text-gray-300">{stat.title}</CardTitle>
-                  <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                    <Icon className={`w-4 h-4 ${stat.color}`} />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-white">{stat.value}</div>
-                  <div className="flex items-center text-xs text-gray-400 mt-1">
-                    <TrendingUp className="w-3 h-3 mr-1" />
-                    <span>vs last period</span>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Card className="bg-gray-900 border-gray-800">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-400">Total</p>
+                  <p className="text-2xl font-bold text-white">{data.length}</p>
+                </div>
+                <AlertTriangle className="h-8 w-8 text-gray-600" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gray-900 border-gray-800">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-400">Open</p>
+                  <p className="text-2xl font-bold text-red-400">
+                    {data.filter((i: any) => i.status === 'OPEN').length}
+                  </p>
+                </div>
+                <AlertTriangle className="h-8 w-8 text-red-600" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gray-900 border-gray-800">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-400">Investigating</p>
+                  <p className="text-2xl font-bold text-yellow-400">
+                    {data.filter((i: any) => i.status === 'INVESTIGATING').length}
+                  </p>
+                </div>
+                <Clock className="h-8 w-8 text-yellow-600" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gray-900 border-gray-800">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-400">Critical</p>
+                  <p className="text-2xl font-bold text-red-400">
+                    {data.filter((i: any) => i.severity === 'CRITICAL').length}
+                  </p>
+                </div>
+                <XCircle className="h-8 w-8 text-red-600" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-          {/* Recent Incidents */}
-          <div className="xl:col-span-2">
-            <Card className="bg-gray-900/50 border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-xl text-white flex items-center">
-                  <Clock className="w-5 h-5 mr-2 text-blue-400" />
-                  Recent Incidents
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {recentIncidents.length > 0 ? (
-                  recentIncidents.map((incident, index) => (
-                    <div key={incident.id}>
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg bg-gray-800/30 hover:bg-gray-800/50 transition-colors cursor-pointer">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-white truncate">{incident.title}</h3>
-                          <p className="text-sm text-gray-400 mt-1 line-clamp-2">{incident.description}</p>
-                          <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-                            <span>Source: {incident.source}</span>
-                            <span>Category: {incident.category}</span>
-                            <span>
-                              {new Date(incident.createdAt).toLocaleDateString("en-US", {
-                                month: "short",
-                                day: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </span>
-                          </div>
-                          {incident.affectedSystems.length > 0 && (
-                            <div className="mt-2 text-foreground">
-                              <span className="text-xs text-gray-500">Affected: </span>
-                              {incident.affectedSystems.map((system, i) => (
-                                <Badge key={i} variant="outline" className="text-xs mr-1 text-white">
-                                  {system}
-                                </Badge>
-                              ))}
-                            </div>
-                          )}
+        {/* Filters and Search */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row gap-4 items-center">
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search incidents..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                />
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-40 bg-gray-800 border-gray-700 text-white">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-700">
+                    <SelectItem value="all" className="text-white hover:bg-gray-700">All Statuses</SelectItem>
+                    <SelectItem value="OPEN" className="text-white hover:bg-gray-700">Open</SelectItem>
+                    <SelectItem value="INVESTIGATING" className="text-white hover:bg-gray-700">Investigating</SelectItem>
+                    <SelectItem value="RESOLVED" className="text-white hover:bg-gray-700">Resolved</SelectItem>
+                    <SelectItem value="CLOSED" className="text-white hover:bg-gray-700">Closed</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={severityFilter} onValueChange={setSeverityFilter}>
+                  <SelectTrigger className="w-40 bg-gray-800 border-gray-700 text-white">
+                    <SelectValue placeholder="Severity" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-700">
+                    <SelectItem value="all" className="text-white hover:bg-gray-700">All Severities</SelectItem>
+                    <SelectItem value="CRITICAL" className="text-white hover:bg-gray-700">Critical</SelectItem>
+                    <SelectItem value="HIGH" className="text-white hover:bg-gray-700">High</SelectItem>
+                    <SelectItem value="MEDIUM" className="text-white hover:bg-gray-700">Medium</SelectItem>
+                    <SelectItem value="LOW" className="text-white hover:bg-gray-700">Low</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <div className="flex items-center border border-gray-700 rounded-lg">
+                  <Button
+                    variant={viewMode === "table" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("table")}
+                    className="rounded-r-none bg-gray-800 text-white hover:bg-gray-700"
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === "cards" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("cards")}
+                    className="rounded-l-none bg-gray-800 text-white hover:bg-gray-700"
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Results */}
+        <div className="text-sm text-gray-400 mb-4">
+          Showing {filteredIncidents.length} of {data.length} incidents
+        </div>
+
+        {/* Content */}
+        {viewMode === "cards" ? (
+          <div className="space-y-4 ">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  cursor-pointer">
+              {filteredIncidents.map((incident: any) => (
+                <Card key={incident.id} className="hover:shadow-lg transition-shadow bg-gray-900 border-gray-800">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="outline" className={`${getStatusColor(incident.status)} text-xs`}>
+                        <div className="flex items-center gap-1">
+                          {getStatusIcon(incident.status)}
+                          {incident.status}
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={getSeverityColor(incident.severity)} className="text-xs">
-                            {incident.severity}
-                          </Badge>
-                          <Badge variant={getStatusColor(incident.status)} className="text-xs">
-                            {incident.status}
-                          </Badge>
-                          {incident.isReportable && (
-                            <Badge variant="outline" className="text-xs text-yellow-400 border-yellow-400">
-                              Reportable
-                            </Badge>
-                          )}
+                      </Badge>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0 text-gray-400 hover:bg-gray-800">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
+                          <DropdownMenuItem className="text-white hover:bg-gray-700">
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-white hover:bg-gray-700">
+                            <User className="mr-2 h-4 w-4" />
+                            Assign
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    <CardTitle className="text-lg line-clamp-2 text-white">{incident.title}</CardTitle>
+                    <CardDescription className="line-clamp-3 text-sm text-gray-400">
+                      {incident.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Badge className={`${getSeverityColor(incident.severity)} text-xs`}>
+                          {incident.severity}
+                        </Badge>
+                        <span className="text-xs text-gray-400">{incident.category}</span>
+                      </div>
+                      
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center text-gray-400">
+                          <Calendar className="mr-2 h-3 w-3" />
+                          {formatDate(incident.createdAt)}
+                        </div>
+                        <div className="flex items-center text-gray-400">
+                          <MapPin className="mr-2 h-3 w-3" />
+                          {incident.source}
+                        </div>
+                        {incident.affectedSystems && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {incident.affectedSystems.slice(0, 2).map((system: any, idx: any) => (
+                              <Badge key={idx} variant="secondary" className="text-xs bg-gray-700 text-gray-300">
+                                {system}
+                              </Badge>
+                            ))}
+                            {incident.affectedSystems.length > 2 && (
+                              <Badge variant="secondary" className="text-xs bg-gray-700 text-gray-300">
+                                +{incident.affectedSystems.length - 2} more
+                              </Badge>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      
+                      {incident.isReportable && (
+                        <div className="flex items-center gap-1 text-xs text-amber-400 bg-amber-900 px-2 py-1 rounded">
+                          <AlertTriangle className="h-3 w-3" />
+                          Reportable incident
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <Card className="bg-gray-900 border-gray-800">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-gray-800">
+                  <TableHead className="text-gray-300">Incident</TableHead>
+                  <TableHead className="text-gray-300">Status</TableHead>
+                  <TableHead className="text-gray-300">Severity</TableHead>
+                  <TableHead className="text-gray-300">Category</TableHead>
+                  <TableHead className="text-gray-300">Source</TableHead>
+                  <TableHead className="text-gray-300">Created</TableHead>
+                  <TableHead className="text-gray-300">Affected Systems</TableHead>
+                  <TableHead className="text-right text-gray-300">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredIncidents.map((incident: any) => (
+                  <TableRow key={incident.id} className="hover:bg-gray-800 border-gray-800">
+                    <TableCell>
+                      <div>
+                        <div className="font-medium text-sm text-white">{incident.title}</div>
+                        <div className="text-xs text-gray-400 line-clamp-2 max-w-xs">
+                          {incident.description}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          ID: {incident.id.split('-')[0]}...
                         </div>
                       </div>
-                      {index < recentIncidents.length - 1 && <Separator className="bg-gray-800 my-2" />}
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8 text-gray-400">
-                    <CheckCircle className="w-12 h-12 mx-auto mb-3 text-gray-600" />
-                    <p>No recent incidents</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Quick Actions */}
-            <Card className="bg-gray-900/50 border-gray-800 text-foreground">
-              <CardHeader>
-                <CardTitle className="text-lg text-white">Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button
-                  onClick={() => router.push("/incidents/new")}
-                  className="w-full justify-start bg-blue-600 hover:bg-blue-700 cursor pointer text-white"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Incident
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => alert("TODO: Connect Slack")}
-                  className="w-full justify-start border-gray-700 hover:bg-gray-800 text-black"
-                >
-                  <Slack className="w-4 h-4 mr-2" />
-                  Connect Slack
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Incident Summary */}
-            <Card className="bg-gray-900/50 border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-lg text-white">Incident Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <h4 className="text-sm font-medium text-gray-300">By Status</h4>
-                  {stats && Object.entries(stats.byStatus).map(([status, count]) => (
-                    <div key={status} className="flex items-center justify-between">
-                      <span className="text-gray-300 text-sm capitalize">{status}</span>
-                      <Badge variant={getStatusColor(status)} className="text-xs">
-                        {count}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={`${getStatusColor(incident.status)} text-xs`}>
+                        <div className="flex items-center gap-1">
+                          {getStatusIcon(incident.status)}
+                          {incident.status}
+                        </div>
                       </Badge>
-                    </div>
-                  ))}
-                </div>
-                <Separator className="bg-gray-800" />
-                <div className="space-y-3">
-                  <h4 className="text-sm font-medium text-gray-300">By Severity</h4>
-                  {stats && Object.entries(stats.bySeverity).map(([severity, count]) => (
-                    <div key={severity} className="flex items-center justify-between">
-                      <span className="text-gray-300 text-sm capitalize">{severity}</span>
-                      <Badge variant={getSeverityColor(severity)} className="text-xs">
-                        {count}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={`${getSeverityColor(incident.severity)} text-xs`}>
+                        {incident.severity}
                       </Badge>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* System Status */}
-            <Card className="bg-gray-900/50 border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-lg text-white">System Status</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {[
-                  { label: "API Service", status: "Operational", color: "green" },
-                  { label: "Database", status: "Degraded", color: "yellow" },
-                  { label: "CDN", status: "Operational", color: "green" },
-                ].map(({ label, status, color }, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <span className="text-gray-300 text-sm">{label}</span>
-                    <div className="flex items-center space-x-2">
-                      <div
-                        className={`w-2 h-2 rounded-full ${
-                          color === "green" ? "bg-green-400" : color === "yellow" ? "bg-yellow-400" : "bg-red-400"
-                        }`}
-                      ></div>
-                      <span
-                        className={`text-sm ${
-                          color === "green" ? "text-green-400" : color === "yellow" ? "text-yellow-400" : "text-red-400"
-                        }`}
-                      >
-                        {status}
-                      </span>
-                    </div>
-                  </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-gray-300">{incident.category}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-gray-300">{incident.source}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm text-gray-300">{formatDate(incident.createdAt)}</div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {incident.affectedSystems ? incident.affectedSystems.slice(0, 2).map((system: any, idx: any) => (
+                          <Badge key={idx} variant="outline" className="text-xs border-gray-600 text-gray-300">
+                            {system}
+                          </Badge>
+                        )) : <span className="text-xs text-gray-500">None</span>}
+                        {incident.affectedSystems && incident.affectedSystems.length > 2 && (
+                          <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
+                            +{incident.affectedSystems.length - 2}
+                          </Badge>
+                        )}
+                      </div>
+                      {incident.isReportable && (
+                        <div className="flex items-center gap-1 text-xs text-amber-400 mt-1">
+                          <AlertTriangle className="h-3 w-3" />
+                          Reportable
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0 text-gray-400 hover:bg-gray-800">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
+                          <DropdownMenuItem className="text-white hover:bg-gray-700">
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-white hover:bg-gray-700">
+                            <User className="mr-2 h-4 w-4" />
+                            Assign
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </CardContent>
-            </Card>
+              </TableBody>
+            </Table>
+          </Card>
+        )}
+
+        {/* Empty State */}
+        {filteredIncidents.length === 0 && !loading && (
+          <div className="text-center py-12">
+            <AlertTriangle className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-white mb-2">No incidents found</h3>
+            <p className="text-gray-400 mb-4">
+              {data.length === 0 
+                ? "No incidents have been reported yet." 
+                : "Try adjusting your search or filter criteria."
+              }
+            </p>
+            {data.length === 0 && (
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                <Plus className="w-4 h-4 mr-2" />
+                Create First Incident
+              </Button>
+            )}
           </div>
-        </div>
+        )}
       </div>
     </div>
-  )
+  );
 }

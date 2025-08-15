@@ -63,21 +63,21 @@ export default function Incidents() {
 
   const getStatusColor = (status: any) => {
     switch(status?.toUpperCase()) {
-      case 'OPEN': return 'bg-red-100 text-red-800 border-red-200';
-      case 'INVESTIGATING': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'RESOLVED': return 'bg-green-100 text-green-800 border-green-200';
-      case 'CLOSED': return 'bg-gray-100 text-gray-800 border-gray-200';
-      default: return 'bg-red-100 text-red-800 border-red-200';
+      case 'OPEN': return 'bg-red-900 text-red-100 border-red-700';
+      case 'INVESTIGATING': return 'bg-yellow-900 text-yellow-100 border-yellow-700';
+      case 'RESOLVED': return 'bg-green-900 text-green-100 border-green-700';
+      case 'CLOSED': return 'bg-gray-700 text-gray-100 border-gray-600';
+      default: return 'bg-red-900 text-red-100 border-red-700';
     }
   };
 
   const getSeverityColor = (severity: any) => {
     switch(severity?.toUpperCase()) {
-      case 'CRITICAL': return 'bg-red-100 text-red-800 border-red-200';
-      case 'HIGH': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'MEDIUM': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'LOW': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'CRITICAL': return 'bg-red-900 text-red-100 border-red-700';
+      case 'HIGH': return 'bg-orange-900 text-orange-100 border-orange-700';
+      case 'MEDIUM': return 'bg-yellow-900 text-yellow-100 border-yellow-700';
+      case 'LOW': return 'bg-blue-900 text-blue-100 border-blue-700';
+      default: return 'bg-gray-700 text-gray-100 border-gray-600';
     }
   };
 
@@ -93,11 +93,11 @@ export default function Incidents() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4">
+      <div className="min-h-screen bg-black p-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center h-64">
-            <RefreshCw className="w-8 h-8 animate-spin text-blue-600" />
-            <span className="ml-2 text-lg">Loading incidents...</span>
+            <RefreshCw className="w-8 h-8 animate-spin text-blue-400" />
+            <span className="ml-2 text-lg text-white">Loading incidents...</span>
           </div>
         </div>
       </div>
@@ -105,20 +105,20 @@ export default function Incidents() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-black p-4">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Incidents Management</h1>
-            <p className="text-gray-600 mt-1">Monitor and manage security incidents</p>
+            <h1 className="text-3xl font-bold text-white">Incidents Management</h1>
+            <p className="text-gray-400 mt-1">Monitor and manage security incidents</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button onClick={getAllIncidents} variant="outline" size="sm" disabled={loading}>
+            <Button onClick={getAllIncidents} variant="outline" size="sm" disabled={loading} className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700">
               <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
-            <Button size="sm">
+            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
               <Plus className="w-4 h-4 mr-2" />
               New Incident
             </Button>
@@ -127,63 +127,63 @@ export default function Incidents() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="bg-white">
+          <Card className="bg-gray-900 border-gray-800">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total</p>
-                  <p className="text-2xl font-bold text-gray-900">{data.length}</p>
+                  <p className="text-sm font-medium text-gray-400">Total</p>
+                  <p className="text-2xl font-bold text-white">{data.length}</p>
                 </div>
-                <AlertTriangle className="h-8 w-8 text-gray-400" />
+                <AlertTriangle className="h-8 w-8 text-gray-600" />
               </div>
             </CardContent>
           </Card>
           
-          <Card className="bg-white">
+          <Card className="bg-gray-900 border-gray-800">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Open</p>
-                  <p className="text-2xl font-bold text-red-600">
+                  <p className="text-sm font-medium text-gray-400">Open</p>
+                  <p className="text-2xl font-bold text-red-400">
                     {data.filter((i: any) => i.status === 'OPEN').length}
                   </p>
                 </div>
-                <AlertTriangle className="h-8 w-8 text-red-400" />
+                <AlertTriangle className="h-8 w-8 text-red-600" />
               </div>
             </CardContent>
           </Card>
           
-          <Card className="bg-white">
+          <Card className="bg-gray-900 border-gray-800">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Investigating</p>
-                  <p className="text-2xl font-bold text-yellow-600">
+                  <p className="text-sm font-medium text-gray-400">Investigating</p>
+                  <p className="text-2xl font-bold text-yellow-400">
                     {data.filter((i: any) => i.status === 'INVESTIGATING').length}
                   </p>
                 </div>
-                <Clock className="h-8 w-8 text-yellow-400" />
+                <Clock className="h-8 w-8 text-yellow-600" />
               </div>
             </CardContent>
           </Card>
           
-          <Card className="bg-white">
+          <Card className="bg-gray-900 border-gray-800">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Critical</p>
-                  <p className="text-2xl font-bold text-red-600">
+                  <p className="text-sm font-medium text-gray-400">Critical</p>
+                  <p className="text-2xl font-bold text-red-400">
                     {data.filter((i: any) => i.severity === 'CRITICAL').length}
                   </p>
                 </div>
-                <XCircle className="h-8 w-8 text-red-400" />
+                <XCircle className="h-8 w-8 text-red-600" />
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Filters and Search */}
-        <Card className="bg-white">
+        <Card className="bg-gray-900 border-gray-800">
           <CardContent className="p-4">
             <div className="flex flex-col sm:flex-row gap-4 items-center">
               <div className="relative flex-1 max-w-md">
@@ -192,43 +192,43 @@ export default function Incidents() {
                   placeholder="Search incidents..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                 />
               </div>
               
               <div className="flex items-center gap-2">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-40">
+                  <SelectTrigger className="w-40 bg-gray-800 border-gray-700 text-white">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Statuses</SelectItem>
-                    <SelectItem value="OPEN">Open</SelectItem>
-                    <SelectItem value="INVESTIGATING">Investigating</SelectItem>
-                    <SelectItem value="RESOLVED">Resolved</SelectItem>
-                    <SelectItem value="CLOSED">Closed</SelectItem>
+                  <SelectContent className="bg-gray-800 border-gray-700">
+                    <SelectItem value="all" className="text-white hover:bg-gray-700">All Statuses</SelectItem>
+                    <SelectItem value="OPEN" className="text-white hover:bg-gray-700">Open</SelectItem>
+                    <SelectItem value="INVESTIGATING" className="text-white hover:bg-gray-700">Investigating</SelectItem>
+                    <SelectItem value="RESOLVED" className="text-white hover:bg-gray-700">Resolved</SelectItem>
+                    <SelectItem value="CLOSED" className="text-white hover:bg-gray-700">Closed</SelectItem>
                   </SelectContent>
                 </Select>
 
                 <Select value={severityFilter} onValueChange={setSeverityFilter}>
-                  <SelectTrigger className="w-40">
+                  <SelectTrigger className="w-40 bg-gray-800 border-gray-700 text-white">
                     <SelectValue placeholder="Severity" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Severities</SelectItem>
-                    <SelectItem value="CRITICAL">Critical</SelectItem>
-                    <SelectItem value="HIGH">High</SelectItem>
-                    <SelectItem value="MEDIUM">Medium</SelectItem>
-                    <SelectItem value="LOW">Low</SelectItem>
+                  <SelectContent className="bg-gray-800 border-gray-700">
+                    <SelectItem value="all" className="text-white hover:bg-gray-700">All Severities</SelectItem>
+                    <SelectItem value="CRITICAL" className="text-white hover:bg-gray-700">Critical</SelectItem>
+                    <SelectItem value="HIGH" className="text-white hover:bg-gray-700">High</SelectItem>
+                    <SelectItem value="MEDIUM" className="text-white hover:bg-gray-700">Medium</SelectItem>
+                    <SelectItem value="LOW" className="text-white hover:bg-gray-700">Low</SelectItem>
                   </SelectContent>
                 </Select>
 
-                <div className="flex items-center border rounded-lg">
+                <div className="flex items-center border border-gray-700 rounded-lg">
                   <Button
                     variant={viewMode === "table" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setViewMode("table")}
-                    className="rounded-r-none"
+                    className="rounded-r-none bg-gray-800 text-white hover:bg-gray-700"
                   >
                     <List className="w-4 h-4" />
                   </Button>
@@ -236,7 +236,7 @@ export default function Incidents() {
                     variant={viewMode === "cards" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setViewMode("cards")}
-                    className="rounded-l-none"
+                    className="rounded-l-none bg-gray-800 text-white hover:bg-gray-700"
                   >
                     <LayoutGrid className="w-4 h-4" />
                   </Button>
@@ -247,7 +247,7 @@ export default function Incidents() {
         </Card>
 
         {/* Results */}
-        <div className="text-sm text-gray-600 mb-4">
+        <div className="text-sm text-gray-400 mb-4">
           Showing {filteredIncidents.length} of {data.length} incidents
         </div>
 
@@ -256,7 +256,7 @@ export default function Incidents() {
           <div className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredIncidents.map((incident: any) => (
-                <Card key={incident.id} className="hover:shadow-md transition-shadow">
+                <Card key={incident.id} className="hover:shadow-lg transition-shadow bg-gray-900 border-gray-800">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <Badge variant="outline" className={`${getStatusColor(incident.status)} text-xs`}>
@@ -267,24 +267,24 @@ export default function Incidents() {
                       </Badge>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
+                          <Button variant="ghost" className="h-8 w-8 p-0 text-gray-400 hover:bg-gray-800">
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                        <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
+                          <DropdownMenuItem className="text-white hover:bg-gray-700">
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem className="text-white hover:bg-gray-700">
                             <User className="mr-2 h-4 w-4" />
                             Assign
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
-                    <CardTitle className="text-lg line-clamp-2">{incident.title}</CardTitle>
-                    <CardDescription className="line-clamp-3 text-sm">
+                    <CardTitle className="text-lg line-clamp-2 text-white">{incident.title}</CardTitle>
+                    <CardDescription className="line-clamp-3 text-sm text-gray-400">
                       {incident.description}
                     </CardDescription>
                   </CardHeader>
@@ -294,27 +294,27 @@ export default function Incidents() {
                         <Badge className={`${getSeverityColor(incident.severity)} text-xs`}>
                           {incident.severity}
                         </Badge>
-                        <span className="text-xs text-muted-foreground">{incident.category}</span>
+                        <span className="text-xs text-gray-400">{incident.category}</span>
                       </div>
                       
                       <div className="space-y-2 text-sm">
-                        <div className="flex items-center text-muted-foreground">
+                        <div className="flex items-center text-gray-400">
                           <Calendar className="mr-2 h-3 w-3" />
                           {formatDate(incident.createdAt)}
                         </div>
-                        <div className="flex items-center text-muted-foreground">
+                        <div className="flex items-center text-gray-400">
                           <MapPin className="mr-2 h-3 w-3" />
                           {incident.source}
                         </div>
                         {incident.affectedSystems && (
                           <div className="flex flex-wrap gap-1 mt-2">
                             {incident.affectedSystems.slice(0, 2).map((system: any, idx: any) => (
-                              <Badge key={idx} variant="secondary" className="text-xs">
+                              <Badge key={idx} variant="secondary" className="text-xs bg-gray-700 text-gray-300">
                                 {system}
                               </Badge>
                             ))}
                             {incident.affectedSystems.length > 2 && (
-                              <Badge variant="secondary" className="text-xs">
+                              <Badge variant="secondary" className="text-xs bg-gray-700 text-gray-300">
                                 +{incident.affectedSystems.length - 2} more
                               </Badge>
                             )}
@@ -323,7 +323,7 @@ export default function Incidents() {
                       </div>
                       
                       {incident.isReportable && (
-                        <div className="flex items-center gap-1 text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
+                        <div className="flex items-center gap-1 text-xs text-amber-400 bg-amber-900 px-2 py-1 rounded">
                           <AlertTriangle className="h-3 w-3" />
                           Reportable incident
                         </div>
@@ -335,30 +335,30 @@ export default function Incidents() {
             </div>
           </div>
         ) : (
-          <Card className="bg-white">
+          <Card className="bg-gray-900 border-gray-800">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Incident</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Severity</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Affected Systems</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="border-gray-800">
+                  <TableHead className="text-gray-300">Incident</TableHead>
+                  <TableHead className="text-gray-300">Status</TableHead>
+                  <TableHead className="text-gray-300">Severity</TableHead>
+                  <TableHead className="text-gray-300">Category</TableHead>
+                  <TableHead className="text-gray-300">Source</TableHead>
+                  <TableHead className="text-gray-300">Created</TableHead>
+                  <TableHead className="text-gray-300">Affected Systems</TableHead>
+                  <TableHead className="text-right text-gray-300">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredIncidents.map((incident: any) => (
-                  <TableRow key={incident.id} className="hover:bg-muted/50">
+                  <TableRow key={incident.id} className="hover:bg-gray-800 border-gray-800">
                     <TableCell>
                       <div>
-                        <div className="font-medium text-sm">{incident.title}</div>
-                        <div className="text-xs text-muted-foreground line-clamp-2 max-w-xs">
+                        <div className="font-medium text-sm text-white">{incident.title}</div>
+                        <div className="text-xs text-gray-400 line-clamp-2 max-w-xs">
                           {incident.description}
                         </div>
-                        <div className="text-xs text-muted-foreground mt-1">
+                        <div className="text-xs text-gray-500 mt-1">
                           ID: {incident.id.split('-')[0]}...
                         </div>
                       </div>
@@ -377,29 +377,29 @@ export default function Incidents() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <span className="text-sm">{incident.category}</span>
+                      <span className="text-sm text-gray-300">{incident.category}</span>
                     </TableCell>
                     <TableCell>
-                      <span className="text-sm">{incident.source}</span>
+                      <span className="text-sm text-gray-300">{incident.source}</span>
                     </TableCell>
                     <TableCell>
-                      <div className="text-sm">{formatDate(incident.createdAt)}</div>
+                      <div className="text-sm text-gray-300">{formatDate(incident.createdAt)}</div>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
                         {incident.affectedSystems ? incident.affectedSystems.slice(0, 2).map((system: any, idx: any) => (
-                          <Badge key={idx} variant="outline" className="text-xs">
+                          <Badge key={idx} variant="outline" className="text-xs border-gray-600 text-gray-300">
                             {system}
                           </Badge>
-                        )) : <span className="text-xs text-muted-foreground">None</span>}
+                        )) : <span className="text-xs text-gray-500">None</span>}
                         {incident.affectedSystems && incident.affectedSystems.length > 2 && (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
                             +{incident.affectedSystems.length - 2}
                           </Badge>
                         )}
                       </div>
                       {incident.isReportable && (
-                        <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
+                        <div className="flex items-center gap-1 text-xs text-amber-400 mt-1">
                           <AlertTriangle className="h-3 w-3" />
                           Reportable
                         </div>
@@ -408,16 +408,16 @@ export default function Incidents() {
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
+                          <Button variant="ghost" className="h-8 w-8 p-0 text-gray-400 hover:bg-gray-800">
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                        <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
+                          <DropdownMenuItem className="text-white hover:bg-gray-700">
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem className="text-white hover:bg-gray-700">
                             <User className="mr-2 h-4 w-4" />
                             Assign
                           </DropdownMenuItem>
@@ -434,16 +434,16 @@ export default function Incidents() {
         {/* Empty State */}
         {filteredIncidents.length === 0 && !loading && (
           <div className="text-center py-12">
-            <AlertTriangle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No incidents found</h3>
-            <p className="text-gray-600 mb-4">
+            <AlertTriangle className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-white mb-2">No incidents found</h3>
+            <p className="text-gray-400 mb-4">
               {data.length === 0 
                 ? "No incidents have been reported yet." 
                 : "Try adjusting your search or filter criteria."
               }
             </p>
             {data.length === 0 && (
-              <Button>
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                 <Plus className="w-4 h-4 mr-2" />
                 Create First Incident
               </Button>
