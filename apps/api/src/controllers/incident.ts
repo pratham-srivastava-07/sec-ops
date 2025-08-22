@@ -53,7 +53,8 @@ export async function getAllIncidentController(req: any, res: any): Promise<any>
 }
 
 export  async function getSpecificIncident(req: any, res: any): Promise<any> {
-    const { id } = req.query
+    const { id } = req.params;
+    console.log("id", id)
     try {
         if(!id) {
           return res.status(400).json({
@@ -80,7 +81,7 @@ export  async function getSpecificIncident(req: any, res: any): Promise<any> {
 }
 
 export async function updateIncidentController(req: any, res: any): Promise<any> {
-  const { id } = req.query;
+  const { id } = req.params;
 
   if (!id || typeof id !== "string") {
     return res.status(400).json({ message: "Invalid incident ID" });
@@ -116,7 +117,7 @@ export async function updateIncidentController(req: any, res: any): Promise<any>
 }
 
 export async function deleteIncidentController(req: any, res: any): Promise<any> {
-    const { id } = req.query;
+    const { id } = req.params;
 
     try {
         const deleteIncident = await prismaClient.incident.delete({

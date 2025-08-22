@@ -1,95 +1,130 @@
 "use client"
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Search, MoreHorizontal, AlertTriangle, CheckCircle, Clock, XCircle, Plus, RefreshCw, Calendar, User, MapPin, Eye, LayoutGrid, List } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@ops/ui';
-import { Button } from '@ops/ui';
-import { Input } from '@ops/ui';
-import { Badge } from '@ops/ui';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ops/ui';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@ops/ui';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@ops/ui';
+import { useState, useEffect } from "react"
+import axios from "axios"
+import {
+  Search,
+  MoreHorizontal,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Plus,
+  RefreshCw,
+  Calendar,
+  User,
+  MapPin,
+  Eye,
+  LayoutGrid,
+  List,
+} from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@ops/ui"
+import { Button } from "@ops/ui"
+import { Input } from "@ops/ui"
+import { Badge } from "@ops/ui"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@ops/ui"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ops/ui"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@ops/ui"
 
 // import {}
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001
 
 export default function Dashboard() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [severityFilter, setSeverityFilter] = useState("all");
-  const [viewMode, setViewMode] = useState("table");
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [severityFilter, setSeverityFilter] = useState("all")
+  const [viewMode, setViewMode] = useState("table")
 
   async function getAllIncidents() {
     try {
-      setLoading(true);
-      const res = await axios.get(`http://localhost:${PORT}/api/v1/incidents`);
-      setData(res.data.result || []);
-      return res.data;
-    } catch(e) {
-      console.log("Error occurred fetching incidents", e);
-      setData([]);
+      setLoading(true)
+      const res = await axios.get(`http://localhost:${PORT}/api/v1/incidents`)
+      setData(res.data.result || [])
+      return res.data
+    } catch (e) {
+      console.log("Error occurred fetching incidents", e)
+      setData([])
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
   useEffect(() => {
-    getAllIncidents();
-  }, []);
+    getAllIncidents()
+  }, [])
 
   const filteredIncidents = data.filter((incident: any) => {
-    const matchesSearch = incident.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         incident.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         incident.id.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === "all" || incident.status === statusFilter;
-    const matchesSeverity = severityFilter === "all" || incident.severity === severityFilter;
-    
-    return matchesSearch && matchesStatus && matchesSeverity;
-  });
+    const matchesSearch =
+      incident.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      incident.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      incident.id.toLowerCase().includes(searchTerm.toLowerCase())
+
+    const matchesStatus = statusFilter === "all" || incident.status === statusFilter
+    const matchesSeverity = severityFilter === "all" || incident.severity === severityFilter
+
+    return matchesSearch && matchesStatus && matchesSeverity
+  })
 
   const getStatusIcon = (status: any) => {
-    switch(status?.toUpperCase()) {
-      case 'OPEN': return <AlertTriangle className="w-4 h-4" />;
-      case 'INVESTIGATING': return <Clock className="w-4 h-4" />;
-      case 'RESOLVED': return <CheckCircle className="w-4 h-4" />;
-      case 'CLOSED': return <XCircle className="w-4 h-4" />;
-      default: return <AlertTriangle className="w-4 h-4" />;
+    switch (status?.toUpperCase()) {
+      case "OPEN":
+        return <AlertTriangle className="w-4 h-4" />
+      case "INVESTIGATING":
+        return <Clock className="w-4 h-4" />
+      case "RESOLVED":
+        return <CheckCircle className="w-4 h-4" />
+      case "CLOSED":
+        return <XCircle className="w-4 h-4" />
+      default:
+        return <AlertTriangle className="w-4 h-4" />
     }
-  };
+  }
 
   const getStatusColor = (status: any) => {
-    switch(status?.toUpperCase()) {
-      case 'OPEN': return 'bg-red-900 text-red-100 border-red-700';
-      case 'INVESTIGATING': return 'bg-yellow-900 text-yellow-100 border-yellow-700';
-      case 'RESOLVED': return 'bg-green-900 text-green-100 border-green-700';
-      case 'CLOSED': return 'bg-gray-700 text-gray-100 border-gray-600';
-      default: return 'bg-red-900 text-red-100 border-red-700';
+    switch (status?.toUpperCase()) {
+      case "OPEN":
+        return "bg-red-900 text-red-100 border-red-700"
+      case "INVESTIGATING":
+        return "bg-yellow-900 text-yellow-100 border-yellow-700"
+      case "RESOLVED":
+        return "bg-green-900 text-green-100 border-green-700"
+      case "CLOSED":
+        return "bg-gray-700 text-gray-100 border-gray-600"
+      default:
+        return "bg-red-900 text-red-100 border-red-700"
     }
-  };
+  }
 
   const getSeverityColor = (severity: any) => {
-    switch(severity?.toUpperCase()) {
-      case 'CRITICAL': return 'bg-red-900 text-red-100 border-red-700';
-      case 'HIGH': return 'bg-orange-900 text-orange-100 border-orange-700';
-      case 'MEDIUM': return 'bg-yellow-900 text-yellow-100 border-yellow-700';
-      case 'LOW': return 'bg-blue-900 text-blue-100 border-blue-700';
-      default: return 'bg-gray-700 text-gray-100 border-gray-600';
+    switch (severity?.toUpperCase()) {
+      case "CRITICAL":
+        return "bg-red-900 text-red-100 border-red-700"
+      case "HIGH":
+        return "bg-orange-900 text-orange-100 border-orange-700"
+      case "MEDIUM":
+        return "bg-yellow-900 text-yellow-100 border-yellow-700"
+      case "LOW":
+        return "bg-blue-900 text-blue-100 border-blue-700"
+      default:
+        return "bg-gray-700 text-gray-100 border-gray-600"
     }
-  };
+  }
 
   const formatDate = (dateString: any) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }
+
+  const handleIncidentClick = (incidentId: string) => {
+    window.location.href = `/incidents/${incidentId}`
+  }
 
   if (loading) {
     return (
@@ -101,7 +136,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -114,8 +149,14 @@ export default function Dashboard() {
             <p className="text-gray-400 mt-1">Monitor and manage security incidents</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button onClick={getAllIncidents} variant="outline" size="sm" disabled={loading} className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700">
-              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            <Button
+              onClick={getAllIncidents}
+              variant="outline"
+              size="sm"
+              disabled={loading}
+              className="border-gray-700 bg-gray-800 text-white hover:bg-gray-700"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
               Refresh
             </Button>
             <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
@@ -138,42 +179,42 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gray-900 border-gray-800">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-400">Open</p>
                   <p className="text-2xl font-bold text-red-400">
-                    {data.filter((i: any) => i.status === 'OPEN').length}
+                    {data.filter((i: any) => i.status === "OPEN").length}
                   </p>
                 </div>
                 <AlertTriangle className="h-8 w-8 text-red-600" />
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gray-900 border-gray-800">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-400">Investigating</p>
                   <p className="text-2xl font-bold text-yellow-400">
-                    {data.filter((i: any) => i.status === 'INVESTIGATING').length}
+                    {data.filter((i: any) => i.status === "INVESTIGATING").length}
                   </p>
                 </div>
                 <Clock className="h-8 w-8 text-yellow-600" />
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gray-900 border-gray-800">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-400">Critical</p>
                   <p className="text-2xl font-bold text-red-400">
-                    {data.filter((i: any) => i.severity === 'CRITICAL').length}
+                    {data.filter((i: any) => i.severity === "CRITICAL").length}
                   </p>
                 </div>
                 <XCircle className="h-8 w-8 text-red-600" />
@@ -195,18 +236,28 @@ export default function Dashboard() {
                   className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                 />
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-40 bg-gray-800 border-gray-700 text-white">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700">
-                    <SelectItem value="all" className="text-white hover:bg-gray-700">All Statuses</SelectItem>
-                    <SelectItem value="OPEN" className="text-white hover:bg-gray-700">Open</SelectItem>
-                    <SelectItem value="INVESTIGATING" className="text-white hover:bg-gray-700">Investigating</SelectItem>
-                    <SelectItem value="RESOLVED" className="text-white hover:bg-gray-700">Resolved</SelectItem>
-                    <SelectItem value="CLOSED" className="text-white hover:bg-gray-700">Closed</SelectItem>
+                    <SelectItem value="all" className="text-white hover:bg-gray-700">
+                      All Statuses
+                    </SelectItem>
+                    <SelectItem value="OPEN" className="text-white hover:bg-gray-700">
+                      Open
+                    </SelectItem>
+                    <SelectItem value="INVESTIGATING" className="text-white hover:bg-gray-700">
+                      Investigating
+                    </SelectItem>
+                    <SelectItem value="RESOLVED" className="text-white hover:bg-gray-700">
+                      Resolved
+                    </SelectItem>
+                    <SelectItem value="CLOSED" className="text-white hover:bg-gray-700">
+                      Closed
+                    </SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -215,11 +266,21 @@ export default function Dashboard() {
                     <SelectValue placeholder="Severity" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700">
-                    <SelectItem value="all" className="text-white hover:bg-gray-700">All Severities</SelectItem>
-                    <SelectItem value="CRITICAL" className="text-white hover:bg-gray-700">Critical</SelectItem>
-                    <SelectItem value="HIGH" className="text-white hover:bg-gray-700">High</SelectItem>
-                    <SelectItem value="MEDIUM" className="text-white hover:bg-gray-700">Medium</SelectItem>
-                    <SelectItem value="LOW" className="text-white hover:bg-gray-700">Low</SelectItem>
+                    <SelectItem value="all" className="text-white hover:bg-gray-700">
+                      All Severities
+                    </SelectItem>
+                    <SelectItem value="CRITICAL" className="text-white hover:bg-gray-700">
+                      Critical
+                    </SelectItem>
+                    <SelectItem value="HIGH" className="text-white hover:bg-gray-700">
+                      High
+                    </SelectItem>
+                    <SelectItem value="MEDIUM" className="text-white hover:bg-gray-700">
+                      Medium
+                    </SelectItem>
+                    <SelectItem value="LOW" className="text-white hover:bg-gray-700">
+                      Low
+                    </SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -256,7 +317,11 @@ export default function Dashboard() {
           <div className="space-y-4 ">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  cursor-pointer">
               {filteredIncidents.map((incident: any) => (
-                <Card key={incident.id} className="hover:shadow-lg transition-shadow bg-gray-900 border-gray-800">
+                <Card
+                  key={incident.id}
+                  className="hover:shadow-lg transition-shadow bg-gray-900 border-gray-800 cursor-pointer hover:border-gray-600"
+                  onClick={() => handleIncidentClick(incident.id)}
+                >
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <Badge variant="outline" className={`${getStatusColor(incident.status)} text-xs`}>
@@ -267,12 +332,22 @@ export default function Dashboard() {
                       </Badge>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0 text-gray-400 hover:bg-gray-800">
+                          <Button
+                            variant="ghost"
+                            className="h-8 w-8 p-0 text-gray-400 hover:bg-gray-800"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
-                          <DropdownMenuItem className="text-white hover:bg-gray-700">
+                          <DropdownMenuItem
+                            className="text-white hover:bg-gray-700"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleIncidentClick(incident.id)
+                            }}
+                          >
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
@@ -291,12 +366,10 @@ export default function Dashboard() {
                   <CardContent className="pt-0">
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <Badge className={`${getSeverityColor(incident.severity)} text-xs`}>
-                          {incident.severity}
-                        </Badge>
+                        <Badge className={`${getSeverityColor(incident.severity)} text-xs`}>{incident.severity}</Badge>
                         <span className="text-xs text-gray-400">{incident.category}</span>
                       </div>
-                      
+
                       <div className="space-y-2 text-sm">
                         <div className="flex items-center text-gray-400">
                           <Calendar className="mr-2 h-3 w-3" />
@@ -321,7 +394,7 @@ export default function Dashboard() {
                           </div>
                         )}
                       </div>
-                      
+
                       {incident.isReportable && (
                         <div className="flex items-center gap-1 text-xs text-amber-400 bg-amber-900 px-2 py-1 rounded">
                           <AlertTriangle className="h-3 w-3" />
@@ -351,16 +424,16 @@ export default function Dashboard() {
               </TableHeader>
               <TableBody>
                 {filteredIncidents.map((incident: any) => (
-                  <TableRow key={incident.id} className="hover:bg-gray-800 border-gray-800">
+                  <TableRow
+                    key={incident.id}
+                    className="hover:bg-gray-800 border-gray-800 cursor-pointer"
+                    onClick={() => handleIncidentClick(incident.id)}
+                  >
                     <TableCell>
                       <div>
                         <div className="font-medium text-sm text-white">{incident.title}</div>
-                        <div className="text-xs text-gray-400 line-clamp-2 max-w-xs">
-                          {incident.description}
-                        </div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          ID: {incident.id.split('-')[0]}...
-                        </div>
+                        <div className="text-xs text-gray-400 line-clamp-2 max-w-xs">{incident.description}</div>
+                        <div className="text-xs text-gray-500 mt-1">ID: {incident.id.split("-")[0]}...</div>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -372,9 +445,7 @@ export default function Dashboard() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge className={`${getSeverityColor(incident.severity)} text-xs`}>
-                        {incident.severity}
-                      </Badge>
+                      <Badge className={`${getSeverityColor(incident.severity)} text-xs`}>{incident.severity}</Badge>
                     </TableCell>
                     <TableCell>
                       <span className="text-sm text-gray-300">{incident.category}</span>
@@ -387,11 +458,15 @@ export default function Dashboard() {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
-                        {incident.affectedSystems ? incident.affectedSystems.slice(0, 2).map((system: any, idx: any) => (
-                          <Badge key={idx} variant="outline" className="text-xs border-gray-600 text-gray-300">
-                            {system}
-                          </Badge>
-                        )) : <span className="text-xs text-gray-500">None</span>}
+                        {incident.affectedSystems ? (
+                          incident.affectedSystems.slice(0, 2).map((system: any, idx: any) => (
+                            <Badge key={idx} variant="outline" className="text-xs border-gray-600 text-gray-300">
+                              {system}
+                            </Badge>
+                          ))
+                        ) : (
+                          <span className="text-xs text-gray-500">None</span>
+                        )}
                         {incident.affectedSystems && incident.affectedSystems.length > 2 && (
                           <Badge variant="outline" className="text-xs border-gray-600 text-gray-300">
                             +{incident.affectedSystems.length - 2}
@@ -408,12 +483,22 @@ export default function Dashboard() {
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0 text-gray-400 hover:bg-gray-800">
+                          <Button
+                            variant="ghost"
+                            className="h-8 w-8 p-0 text-gray-400 hover:bg-gray-800"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
-                          <DropdownMenuItem className="text-white hover:bg-gray-700">
+                          <DropdownMenuItem
+                            className="text-white hover:bg-gray-700"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleIncidentClick(incident.id)
+                            }}
+                          >
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
@@ -437,10 +522,9 @@ export default function Dashboard() {
             <AlertTriangle className="w-12 h-12 text-gray-600 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-white mb-2">No incidents found</h3>
             <p className="text-gray-400 mb-4">
-              {data.length === 0 
-                ? "No incidents have been reported yet." 
-                : "Try adjusting your search or filter criteria."
-              }
+              {data.length === 0
+                ? "No incidents have been reported yet."
+                : "Try adjusting your search or filter criteria."}
             </p>
             {data.length === 0 && (
               <Button className="bg-blue-600 hover:bg-blue-700 text-white">
@@ -452,5 +536,5 @@ export default function Dashboard() {
         )}
       </div>
     </div>
-  );
+  )
 }
